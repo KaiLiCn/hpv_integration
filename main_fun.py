@@ -12,8 +12,8 @@ app = Dash(__name__)
 
 
 annotation_data = get_data.inergrate_data(
-    "C:/Users/likai/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/annotation.csv",
-    "C:/Users/likai/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/inserts.csv")[
+    "~/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/annotation.csv",
+    "~/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/inserts.csv")[
     0]
 
 # ------------------------------------------------------------------------------
@@ -41,7 +41,8 @@ app.layout = html.Div([
     ),
     html.Div(id='gene-integration-container'),
 
-    dcc.Graph(id='draw_hpv'),
+    dcc.Graph(id='draw_hpv',
+              config={'displayModeBar': False}),
 
     html.Br(),
 
@@ -77,9 +78,11 @@ def update_genes(rows, derived_virtual_selected_rows):
 
 @app.callback(
     Output('draw_hpv', 'figure'),
-    Input('datatable-annotation', "derived_virtual_data")
+    Input('datatable-annotation', "derived_virtual_selected_rows")
 )
-def update_hpv(derived_virtual_data):
+def update_hpv(derived_virtual_selected_rows):
+    select_dff = annotation_data.iloc[derived_virtual_selected_rows, :]
+
     fig = draw_hpv.generate_hpv_plot()
     return fig
 
