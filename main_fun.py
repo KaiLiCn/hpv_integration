@@ -1,5 +1,6 @@
 import pandas as pd
 import get_data
+import draw_hpv
 import dash_bio as dashbio
 import plotly.express as px  # (version 4.7.0 or higher)
 import plotly.graph_objects as go
@@ -40,6 +41,8 @@ app.layout = html.Div([
     ),
     html.Div(id='gene-integration-container'),
 
+    dcc.Graph(id='draw_hpv'),
+
     html.Br(),
 
 ])
@@ -72,6 +75,13 @@ def update_genes(rows, derived_virtual_selected_rows):
         for chrom in select_dff["chr"]
     ]
 
+@app.callback(
+    Output('draw_hpv', 'figure'),
+    Input('datatable-annotation', "derived_virtual_data")
+)
+def update_hpv(derived_virtual_data):
+    fig = draw_hpv.generate_hpv_plot()
+    return fig
 
 # ------------------------------------------------------------------------------
 if __name__ == '__main__':
