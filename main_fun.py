@@ -13,8 +13,8 @@ app = Dash(__name__)
 
 
 sample_datatable, insertion_table = get_data.inergrate_data(
-    "C:/Users/likai/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/annotation.csv",
-    "C:/Users/likai/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/inserts.csv")
+    "~/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/annotation.csv",
+    "~/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/inserts.csv")
 
 default_insertion = insertion_table[(insertion_table['sample'] == sample_datatable.iloc[0]['sample']) & (
         insertion_table['gene'] == sample_datatable.iloc[0]['gene'])]
@@ -41,15 +41,15 @@ app.layout = html.Div([
             page_current=0,
             page_size=10,
         )], style={'width': '20%', 'display': 'inline-block', 'padding': 10}),
-        html.Div(id='datatable-insertion', children=[dash_table.DataTable(id='insertion')],
+        html.Div(id='datatable-insertion', children=[dash_table.DataTable(id='insertion', style_table={'overflowX': 'auto'})],
                  style={'width': '70%', 'display': 'inline-block', 'padding': 10}
                  )], style={'display': 'flex', 'flex-direction': 'row'}),
 
-    html.Div(id='gene-integration-container'),
+    #html.Div(id='gene-integration-container'),
 
     dcc.Graph(id='draw_hpv',
               config={'displayModeBar': False},
-              style={'width': '70%', 'display': 'inline-block', 'padding': 10, 'height': '60vh'}),
+              style={'width': '78%', 'display': 'inline-block', 'padding': 10, 'height': '60vh'}),
 
     html.Br(),
 
@@ -88,6 +88,7 @@ def update_insertion_table(derived_virtual_selected_rows):
         page_action="native",
         page_current=0,
         page_size=10,
+        style_table={'overflowX': 'auto'}
     )
 
 
