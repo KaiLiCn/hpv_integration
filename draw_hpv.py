@@ -182,8 +182,6 @@ def generate_hpv_plot(select_dff):
         for gene_start in gene_dict[chrome]:
             total_length += gene_dict[chrome][gene_start][2]
 
-    print(total_length)
-
     whole_ratio = total_length / 7904
     trans_start = 0
     for chrome in gene_dict.keys():
@@ -209,8 +207,6 @@ def generate_hpv_plot(select_dff):
             ))
             gene_dict[chrome][gene_start].append(trans_start)
             trans_start += gene_len
-    print(gene_dict)
-
 
     ### Add contig:
     contig_list = dict()

@@ -19,6 +19,43 @@ default_insertion = insertion_table[(insertion_table['sample'] == sample_datatab
         insertion_table['gene'] == sample_datatable.iloc[0]['gene'])]
 
 position_can = [-2, -1, 0, 1, 2, 3]
+
+table_data = default_insertion.copy()
+default_insertion['position'] = "0"
+
+def get_insertion_table(data_insertion):
+    data_table = dash_table.DataTable(
+        id='insertion',
+        columns=([
+                     {"name": i, "id": i, "deletable": False, "selectable": False, "editable": False} for i in
+                     data_insertion.columns
+                 ] + [{'id': 'position', 'name': 'position', 'presentation': 'dropdown'}
+                      ]),
+        data=data_insertion.to_dict('records'),
+        editable=True,
+        filter_action="native",
+        sort_action="native",
+        sort_mode="multi",
+        row_selectable="multi",
+        row_deletable=False,
+        selected_rows=[0],
+        page_action="native",
+        page_current=0,
+        page_size=10,
+        dropdown={
+            'position': {
+                'options': [
+                    {'label': str(i), 'value': i}
+                    for i in position_can
+                ]
+            }
+
+        }
+    )
+
+    return data_table
+
+
 # ------------------------------------------------------------------------------
 # App layout
 app.layout = html.Div([
@@ -28,9 +65,9 @@ app.layout = html.Div([
         html.Div([dash_table.DataTable(
             id='datatable-sample',
             columns=([
-                         {"name": i, "id": i, "deletable": False, "selectable": False} for i in
-                         sample_datatable.columns]
-                     ),
+                {"name": i, "id": i, "deletable": False, "selectable": False} for i in
+                sample_datatable.columns]
+            ),
             data=sample_datatable.to_dict('records'),
             editable=False,
             filter_action="native",
@@ -43,7 +80,7 @@ app.layout = html.Div([
             page_current=0,
             page_size=10,
         )], style={'width': '20%', 'display': 'inline-block', 'padding': 10}),
-        html.Div(id='datatable-insertion', children=[dash_table.DataTable(id='insertion')],
+        html.Div(id='datatable-insertion', children=[get_insertion_table(default_insertion)],
                  style={'width': '70%', 'display': 'inline-block', 'padding': 10}
                  )], style={'display': 'flex', 'flex-direction': 'row'}),
 
@@ -51,7 +88,7 @@ app.layout = html.Div([
 
     dcc.Graph(id='draw_hpv',
               config={'displayModeBar': False, },
-              style={'width': '70%', 'display': 'inline-block', 'padding': 10, 'height': '60vh'}),
+              style={'width': '80%', 'display': 'inline-block', 'padding': 10, 'height': '60vh'}),
 
     html.Br(),
 
@@ -76,33 +113,7 @@ def update_insertion_table(derived_virtual_selected_rows):
 
     table_data = output_data.copy()
     table_data['position'] = "0"
-    return dash_table.DataTable(
-        id='insertion',
-        columns=([
-                    {"name": i, "id": i, "deletable": False, "selectable": False, "editable": False} for i in output_data.columns
-                ] + [{'id': 'position', 'name': 'position', 'presentation': 'dropdown'}
-                     ]),
-        data=table_data.to_dict('records'),
-        editable=True,
-        filter_action="native",
-        sort_action="native",
-        sort_mode="multi",
-        row_selectable="multi",
-        row_deletable=False,
-        selected_rows=[0],
-        page_action="native",
-        page_current=0,
-        page_size=10,
-        dropdown={
-            'position': {
-                'options': [
-                    {'label': str(i), 'value': i}
-                    for i in position_can
-                ]
-            }
-
-        }
-    )
+    return get_insertion_table(table_data)
 
 
 # @app.callback(
@@ -135,7 +146,7 @@ def update_insertion_table(derived_virtual_selected_rows):
 )
 def update_hpv(derived_virtual_data, derived_virtual_selected_rows):
     derived_virtual_data = pd.DataFrame(derived_virtual_data)
-    select_dff = derived_virtual_data.iloc[derived_virtual_selected_rows, :]
+    select_dff = derived_virtual_data.iloc[derived_virtual_selected_rows]
 
     fig = draw_hpv.generate_hpv_plot(select_dff)
     return fig
