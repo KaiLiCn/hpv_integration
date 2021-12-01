@@ -20,10 +20,11 @@ default_insertion = insertion_table[(insertion_table['sample'] == sample_datatab
 
 position_can = [-2, -1, 0, 1, 2, 3]
 
-table_data = default_insertion.copy()
-default_insertion['position'] = "0"
+default_table_data = default_insertion.copy()
+default_table_data['position'] = "0"
 
-def get_insertion_table(data_insertion):
+
+def get_insertion_table(data_insertion, data_in_table):
     data_table = dash_table.DataTable(
         id='insertion',
         columns=([
@@ -31,7 +32,7 @@ def get_insertion_table(data_insertion):
                      data_insertion.columns
                  ] + [{'id': 'position', 'name': 'position', 'presentation': 'dropdown'}
                       ]),
-        data=data_insertion.to_dict('records'),
+        data=data_in_table.to_dict('records'),
         editable=True,
         filter_action="native",
         sort_action="native",
@@ -80,8 +81,8 @@ app.layout = html.Div([
             page_current=0,
             page_size=10,
         )], style={'width': '20%', 'display': 'inline-block', 'padding': 10}),
-        html.Div(id='datatable-insertion', children=[get_insertion_table(default_insertion)],
-                 style={'width': '70%', 'display': 'inline-block', 'padding': 10}
+        html.Div(id='datatable-insertion', children=[get_insertion_table(default_insertion, default_table_data)],
+                 style={'width': '60%', 'display': 'inline-block', 'padding': 10}
                  )], style={'display': 'flex', 'flex-direction': 'row'}),
 
     html.Div(id='gene-integration-container'),
@@ -113,7 +114,7 @@ def update_insertion_table(derived_virtual_selected_rows):
 
     table_data = output_data.copy()
     table_data['position'] = "0"
-    return get_insertion_table(table_data)
+    return get_insertion_table(output_data, table_data)
 
 
 # @app.callback(
@@ -146,6 +147,8 @@ def update_insertion_table(derived_virtual_selected_rows):
 )
 def update_hpv(derived_virtual_data, derived_virtual_selected_rows):
     derived_virtual_data = pd.DataFrame(derived_virtual_data)
+
+    print(derived_virtual_selected_rows)
     select_dff = derived_virtual_data.iloc[derived_virtual_selected_rows]
 
     fig = draw_hpv.generate_hpv_plot(select_dff)
