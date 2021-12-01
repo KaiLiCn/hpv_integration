@@ -11,13 +11,14 @@ app = Dash(__name__)
 
 # -- Import and clean data (importing csv into pandas)
 
-
 sample_datatable, insertion_table = get_data.inergrate_data(
     "C:/Users/likai/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/annotation.csv",
     "C:/Users/likai/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/inserts.csv")
 
 default_insertion = insertion_table[(insertion_table['sample'] == sample_datatable.iloc[0]['sample']) & (
         insertion_table['gene'] == sample_datatable.iloc[0]['gene'])]
+
+position_can = [-2, -1, 0, 1, 2, 3]
 # ------------------------------------------------------------------------------
 # App layout
 app.layout = html.Div([
@@ -26,9 +27,10 @@ app.layout = html.Div([
     html.Div([
         html.Div([dash_table.DataTable(
             id='datatable-sample',
-            columns=[
-                {"name": i, "id": i, "deletable": False, "selectable": False} for i in sample_datatable.columns
-            ],
+            columns=([
+                         {"name": i, "id": i, "deletable": False, "selectable": False} for i in
+                         sample_datatable.columns]
+                     ),
             data=sample_datatable.to_dict('records'),
             editable=False,
             filter_action="native",
@@ -48,7 +50,7 @@ app.layout = html.Div([
     html.Div(id='gene-integration-container'),
 
     dcc.Graph(id='draw_hpv',
-              config={'displayModeBar': False},
+              config={'displayModeBar': False, },
               style={'width': '70%', 'display': 'inline-block', 'padding': 10, 'height': '60vh'}),
 
     html.Br(),
@@ -72,13 +74,16 @@ def update_insertion_table(derived_virtual_selected_rows):
     output_data = insertion_table[
         insertion_table['sample'].isin(select_dff['sample']) & insertion_table['gene'].isin(select_dff['gene'])]
 
+    table_data = output_data.copy()
+    table_data['position'] = "0"
     return dash_table.DataTable(
         id='insertion',
-        columns=[
-            {"name": i, "id": i, "deletable": False, "selectable": False} for i in output_data.columns
-        ],
-        data=output_data.to_dict('records'),
-        editable=False,
+        columns=([
+                    {"name": i, "id": i, "deletable": False, "selectable": False, "editable": False} for i in output_data.columns
+                ] + [{'id': 'position', 'name': 'position', 'presentation': 'dropdown'}
+                     ]),
+        data=table_data.to_dict('records'),
+        editable=True,
         filter_action="native",
         sort_action="native",
         sort_mode="multi",
@@ -88,6 +93,15 @@ def update_insertion_table(derived_virtual_selected_rows):
         page_action="native",
         page_current=0,
         page_size=10,
+        dropdown={
+            'position': {
+                'options': [
+                    {'label': str(i), 'value': i}
+                    for i in position_can
+                ]
+            }
+
+        }
     )
 
 
