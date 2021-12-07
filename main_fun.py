@@ -51,7 +51,11 @@ def get_insertion_table(data_insertion, data_in_table):
                 ]
             }
 
-        }
+        },
+        css=[{
+            "selector": ".Select-menu-outer",
+            "rule": 'display : block!important'
+        }]
     )
 
     return data_table
@@ -148,7 +152,6 @@ def update_insertion_table(derived_virtual_selected_rows):
 def update_hpv(derived_virtual_data, derived_virtual_selected_rows):
     derived_virtual_data = pd.DataFrame(derived_virtual_data)
 
-    print(derived_virtual_selected_rows)
     select_dff = derived_virtual_data.iloc[derived_virtual_selected_rows]
 
     fig = draw_hpv.generate_hpv_plot(select_dff)
