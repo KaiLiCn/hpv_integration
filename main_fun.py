@@ -12,7 +12,6 @@ app = Dash(__name__)
 # -- Import and clean data (importing csv into pandas)
 
 sample_datatable, insertion_table = get_data.inergrate_data(
-    "C:/Users/likai/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/annotation.csv",
     "C:/Users/likai/Dropbox (University of Michigan)/Kai Li’s files/Courses/Rotations/Ryan Mills/geneModel/inserts.csv")
 
 default_insertion = insertion_table[(insertion_table['sample'] == sample_datatable.iloc[0]['sample']) & (
